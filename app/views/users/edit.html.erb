@@ -1,0 +1,10 @@
+<%@page_title="Edit User Profile"%>
+<%=render 'layout'%>
+<div class="container">
+<h1>Editing User Profile</h1>
+<%= render 'form' %>
+<%= link_to 'Show Profile', @user %>
+<%if admin?%>
+ | <%= link_to 'Back', users_path %>
+<%end%>
+</div>

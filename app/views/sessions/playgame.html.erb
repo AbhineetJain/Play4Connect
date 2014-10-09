@@ -1,0 +1,148 @@
+<% @page_title = "Play Game" %>
+<%= render 'layout' %>
+<div class="container">
+	<div class="row" id="rules">
+		<span class="col-md-3"></span>
+		<div class="col-md-6">
+			<h2 style="text-align:center;">Scoring Pattern</h2>
+			<ul>
+				<h3><li>3 tries for every picture.</li></h3>
+				<h3><li>+3 for correct answer.</li></h3>
+				<h3><li>-1 for incorrect answer.</li></h3>
+			</ul>
+			<h3 style="text-align:center;">Game ends when all tries are over, or all pictures are answered.</h3>
+		</div>
+		<span class="col-md-3"></span>
+	</div>
+	<div class="row">
+		<div class="col-md-5">
+			<img id="gamePic" src="" style="display: none;"/>
+			<p id="challenge" style="display:none;">Challenge your friends to beat your score.</p>
+			<label style="display:none;">Enter E-mail IDs (comma(,) separated):</label>
+			<input type="text" id="send_to" class="form-control" style="display:none;">
+			<button id="emailButton" class="btn btn-primary" style="display:none;">Challenge</button><br>
+			<img id="loading" src="/img/now-loading.gif" style="display:none; height:240px; width:360;"/>
+		</div>
+		<div class="col-md-4">
+			<h2 id="dispTries"></h2>
+			<h2 id="dispScore"></h2>
+			<button id="startButton" class="btn btn-lg btn-success">Start Game</button>
+			<form id="submitForm" action="javascript: checkAns();" class="form-inline" autocomplete="off">
+				<input class="form-control col-md-6" id="answerInput" type="text" style="display: none;"/>
+				<button id="submitAns" class="btn btn-default col-md-5 pull-right" style="display: none;">Answer</button> 
+			</form>
+			<p class="row" style="margin-top:100px;">
+				<span class="col-md-2"></span>
+				<i  id="ok" class="glyphicon glyphicon-ok col-md-8" style="display: none; font-size:150px; color:#40FF00; text-align:center;"></i>
+				<i  id="no" class="glyphicon glyphicon-remove col-md-8" style="display: none; font-size:150px; color:red; text-align:center;"></i>
+				<span class="col-md-2"></span>
+			</p>
+		</div>
+	</div>
+</div>
+<div id="jsonImage" style="display:none;">
+	<%= @imageHash %>
+</div>
+<script type="text/javascript">
+	var imageId, totalScore=0;
+	var tagNames, tries=3, correct;
+	var	totalScore=0;
+	var imageIdControl = new Array(10);
+	for (var i=0; i<10; i++)
+		imageIdControl[i]=0;
+	$(document).ready(
+		function() {
+			tagNames = <%= raw @imageHash.to_json %>;
+	});
+	function allImages() {
+		ans = 1;
+		for (var i = imageIdControl.length - 1; i >= 0; i--) {
+			ans = ans & imageIdControl[i];
+		}
+		console.log(ans);
+		return ans;
+	}
+	$('#startButton').click(start);
+	$('#emailButton').click(function() {
+		$('#loading').show();
+		$.ajax({
+			url: "/invite",
+			data: {send_to:$('#send_to').val().trim()},
+			success: function(data) {window.location.assign("/home");}
+		});
+	});
+	function start() {
+		document.getElementById('submitForm').reset();
+		$('#rules').hide();
+		tries=3;
+		$('#dispTries').html("Tries remaining: "+tries.toString());
+		$('#dispScore').html("Score: "+totalScore.toString());
+		correct=0;
+		$("#startButton").hide();
+		$('#gamePic').show();
+		$('#answerInput').show();
+		$('#submitAns').show();
+		$('#answerInput').focus();
+		if(!allImages())
+		{
+			imageId=Math.floor(Math.random()*10+2);
+			while(imageIdControl[imageId-2]==1)
+				imageId=Math.floor(Math.random()*10+2);
+			dispImage(imageId);
+		}
+		else
+			gameOver();
+	}
+	function dispImage(imageId) {
+		if(tries != 0){
+			imageIdControl[imageId-2]=1;
+			$('#gamePic').attr("src", "/images/code_image/"+imageId.toString());
+		}
+		else
+			gameOver();
+	}
+	function checkAns(){
+		if($("#answerInput").val().trim().toLowerCase() == tagNames[imageId]) {
+			document.getElementById('submitForm').reset();
+			totalScore+=3;
+			correct = 1;
+			$('#ok').show();
+			$('#no').hide();
+			$('#dispScore').html("Score: "+totalScore.toString());
+			start();
+		}
+		else {
+			document.getElementById('submitForm').reset();
+			tries--;
+			totalScore-=1;
+			$('#dispTries').html("Tries remaining: "+tries.toString());
+			$('#ok').hide();
+			$('#no').show();
+			$('#dispScore').html("Score: "+totalScore.toString());
+			dispImage(imageId);
+		}
+	}
+	function gameOver() {
+		$("#startButton").show();
+		$('#gamePic').hide();
+		$('#answerInput').hide();
+		$('#submitAns').hide();
+		$('#dispTries').html("Game Over!");
+		$('#ok').hide();
+		$('#no').hide();
+		$('#challenge').show();
+		$('#send_to').show();
+		$('#emailButton').show();
+		$('label').show();
+		$('#dispScore').html("Score: "+totalScore.toString());
+		$.ajax({
+			type: 'POST',
+			url: '/submit',
+			data: {user_id:<%= @current_user.id%>, finalscore:totalScore},
+			success: function(data) {console.log("Success!");}
+		});
+		totalScore=0;
+		for (var i=0; i<10; i++)
+			imageIdControl[i]=0;
+	}
+</script>

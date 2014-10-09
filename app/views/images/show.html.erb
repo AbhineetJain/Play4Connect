@@ -1,0 +1,32 @@
+<%@page_title="Show Image"%>
+<%=render 'layout'%>
+<div class="container">
+<table class="table table-bordered table-striped table-hover">
+<tr>
+<td>
+	<strong>Tag:</strong>
+</td>
+<td>
+	<%= @image.tag %>
+</td>
+</tr>
+<tr>
+<td>
+	<strong>Image:</strong>
+</td>
+<td>
+	<%= image_tag("/images/code_image/#{@image.id}", :alt => "Image", :class=>"img-bg") %>
+</td>
+</tr>
+<tr>
+<td>
+  <strong>Filename:</strong>
+</td>
+<td>
+  <%= @image.filename %>
+</td>
+</tr>
+</table>
+<%= link_to 'Edit', edit_image_path(@image) %> |
+<%= link_to 'Back', images_path %>
+</div>

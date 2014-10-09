@@ -1,0 +1,31 @@
+<% @page_title = "Leaderboard" %>
+<%= render 'layout' %>
+<div class="container">
+<div class="row">
+	<span class="col-md-3"></span>
+	<div class="col-md-6">
+	<table class="table table-bordered table-striped table-hover">
+	  <thead>
+	    <tr>
+	      <th>Username</th>
+	      <th>Score</th>
+	    </tr>
+	  </thead>
+
+	  <tbody>
+	    <%if @scores.present?%>
+		    <% @scores.each do |s| %>
+		      <tr>
+		        <td><%= User.find(s.user_id).username %></td>
+		        <td><%= s.score %></td>
+		      </tr>
+		    <% end %>
+		<%else%>
+			<tr><td colspan="2">No scores to display!</td></tr>
+		<%end%>
+	  </tbody>
+	</table>
+</div>
+	<span class="col-md-3"></span>
+</div>
+</div>

@@ -1,0 +1,35 @@
+<style type="text/css">
+  body {
+    background-image: url("/img/bg.jpg");
+  }
+</style>
+<% @page_title = "Login" %>
+      <div class="container" id="login-block">
+        <div class="row">
+          <div class="col-sm-6 col-md-4 col-sm-offset-3 col-md-offset-4">
+             
+             <div class="login-box clearfix animated flipInY">
+                <div class="page-icon animated bounceInDown">
+                  <img  src="/img/user-icon.png" alt="Key icon" />
+                </div>
+                <div class="login-logo">
+                  <img src="/img/login-logo.png" alt="Company Logo" />
+                </div> 
+                <hr />
+                <div class="login-form">
+                  <%= form_tag(:action => 'login_attempt') do %>
+                    <%= text_field_tag(:username_or_email, nil, :placeholder=>"Username or Email", :class=>"input-field") %>
+                    <%= password_field_tag(:login_password, nil, :placeholder=>"Password", :class=>"input-field") %>
+                    <%= submit_tag("Sign In", :class=>"btn btn-login") %> 
+                <%end%> 
+                <div class="login-links"> 
+                      <a href="/signup">
+                        Don't have an account? <strong>Sign Up</strong>
+                      </a>
+                </div>          
+                </div>                
+             </div>
+          </div>
+      </div>
+      </div>
+     <!-- End Login box -->

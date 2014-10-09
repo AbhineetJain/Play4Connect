@@ -1,0 +1,23 @@
+<%= form_for(@image) do |f| %>
+  <% if @image.errors.any? %>
+    <div class="alert alert-danger">
+        <button type="button" class="close" data-dismiss="alert"> &times;</button>
+        <h4>Error!</h4>
+        <% for message_error in @image.errors.full_messages %>
+        <%= message_error %><br>
+        <% end %> 
+    </div> <!-- End Error box -->
+  <% end %>
+  
+  <div class="field">
+    <%= f.label "Image File", :class=>"control-label"%><br>
+    <%= f.file_field :image_file %>
+  </div>
+  <div class="field">
+    <%= f.label :tag, :class=>"control-label" %><br>
+    <%= f.text_field :tag, :class=>"form-control" %>
+  </div>
+   <div class="actions">
+    <%= f.submit "Submit", :class=>"btn btn-sm btn-success" %>  
+  </div>
+<% end %>
